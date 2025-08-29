@@ -1,0 +1,418 @@
+/* login.css - Dark Theme for the login page */
+
+:root {
+    --primary-color: #4A90E2;
+    --primary-light: #75AAEB;
+    --primary-dark: #3A75C4;
+    --background-dark: #121212;
+    --background-card: #1E1E1E;
+    --background-input: #2A2A2A;
+    --text-light: #FFFFFF;
+    --text-gray: #BBBBBB;
+    --text-muted: #888888;
+    --border-color: #333333;
+    --error-color: #F44336;
+    --success-color: #4CAF50;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: var(--text-light);
+    background-color: var(--background-dark);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Auth Container */
+.auth-container {
+    display: flex;
+    background-color: var(--background-card);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    max-width: 1000px;
+    margin: 0 auto;
+    min-height: 600px;
+}
+
+/* Image Side */
+.auth-image {
+    flex: 1;
+    position: relative;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30px;
+    background-image: url('../loginPhoto.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+
+.backdrop-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+/* Add these styles to your login.css file */
+
+/* Logo styling */
+.logo-container {
+    position: relative;
+    z-index: 11;
+    align-self: flex-start;
+    margin-bottom: 10px;
+}
+
+.site-logo {
+    max-width: 150px;
+    height: auto;
+}
+
+/* Adjust the overlay to be less opaque */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+    z-index: 1;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo::before {
+    content: "☀️";
+    font-size: 24px;
+}
+
+.tagline {
+    margin-top: auto;
+    position: relative;
+    z-index: 2;
+    font-weight: 500;
+}
+
+/* Form Side */
+.auth-form {
+    flex: 1;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-card);
+}
+
+.auth-form h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: var(--text-light);
+}
+
+.auth-form p {
+    color: var(--text-gray);
+    margin-bottom: 30px;
+}
+
+.auth-form a {
+    color: var(--primary-light);
+    text-decoration: none;
+}
+
+.auth-form a:hover {
+    text-decoration: underline;
+}
+
+/* Error Alert */
+.error-alert {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--error-color);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--error-color);
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="search"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background-color: var(--background-input);
+    color: var(--text-light);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+input::placeholder {
+    color: var(--text-muted);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.password-toggle:hover {
+    color: var(--primary-light);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Secondary action buttons */
+.btn-secondary {
+    background-color: rgba(74, 144, 226, 0.15);
+    color: var(--primary-light);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(74, 144, 226, 0.25);
+}
+
+/* Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+    color: var(--text-muted);
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.divider span {
+    padding: 0 15px;
+    font-size: 14px;
+}
+
+/* Social Buttons */
+.social-login {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-google,
+.btn-apple {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    background-color: var(--background-input);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 500;
+}
+
+.btn-google:hover,
+.btn-apple:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Search container */
+.search-container {
+    position: relative;
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border-radius: 25px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-input);
+    color: var(--text-light);
+    font-size: 16px;
+}
+
+.search-container button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--primary-light);
+    cursor: pointer;
+}
+
+/* Notification and permission styles */
+.notification-box {
+    background-color: var(--background-card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    margin: 30px 0;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.permission-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn-allow {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.btn-deny {
+    background-color: #333333;
+    color: var(--text-light);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: rgba(20, 20, 20, 0.95);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text-light);
+}
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+        max-height: none;
+    }
+
+    .auth-image {
+        min-height: 200px;
+    }
+
+    .social-login {
+        flex-direction: column;
+    }
+
+    .auth-form {
+        padding: 30px 20px;
+    }
+
+    .header {
+        padding: 15px;
+    }
+}
+
+/* For very small screens */
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .auth-form h1 {
+        font-size: 24px;
+    }
+
+    .permission-buttons {
+        flex-direction: column;
+    }
+}

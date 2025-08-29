@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Comparison - GoWeather Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/compare.css">
+</head>
+<body class="dark-theme">
+<!-- Header -->
+<div class="header">
+    <div class="header-logo">
+        <a href="/" class="logo">
+            <img src="/static/Mainlogo.png" alt="GoWeather Logo" class="logo-img">
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="welcome-text">Welcome, <strong id="username">{{ if .User }}{{ .User.Username }}{{ else }}User{{ end }}</strong></div>
+        <div class="nav-buttons">
+            <a href="./" class="transparent-button">Home</a>
+
+            <a href="./compare" class="transparent-button compare-button">Compare</a>
+            <a href="./historical-comparison" class="transparent-button">Historical</a>
+            <a href="./travel-weather" class="transparent-button">Travel Plan</a>
+            <a href="./activities" class="transparent-button">Activities</a>
+
+
+            <!-- Profile dropdown -->
+            <div class="profile-dropdown">
+                <div class="profile-circle" id="profileCircle">
+                    <img id="profile-photo" src="{{ if .User.ProfilePhoto }}/static/profile_photos/{{ .User.ProfilePhoto }}{{ else }}/static/profile_photos/default.jpg{{ end }}" alt="Profile Photo" height="40px">
+                </div>
+                <div class="dropdown-content" id="dropdownContent">
+                    <a href="./profile"><i class="fas fa-user"></i> Profile</a>
+                    <a href="./logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dashboard-container">
+    <h1>Weather Comparison</h1>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading">
+        <div class="spinner"></div>
+        <span>Getting weather data...</span>
+    </div>
+
+    <!-- Search Box -->
+    <div class="search-container">
+        <form id="searchForm" action="#" method="GET">
+            <div class="search-box">
+                <input type="text" id="city-input" class="search-bar" placeholder="Enter city name">
+            </div>
+            <button type="button" id="add-city" class="search-button">Add City</button>
+            <button type="button" id="clear-all" class="search-button clear-all-button">Clear All</button>
+        </form>
+    </div>
+
+    {{ if .Error }}
+    <div class="error-message">{{ .Error }}</div>
+    {{ end }}
+
+    <!-- Cities Container -->
+    <div class="cities-container" id="cities-container">
+        {{ if .Cities }}
+        {{ range .Cities }}
+        <div class="weather-card city-card" data-city="{{ .Name }}">
+            <div class="city-header">
+                <h2>{{ .Name }}</h2>
+                <button class="remove-city" data-city="{{ .Name }}">×</button>
+            </div>
+            <div class="city-content">
+                <div class="temperature">{{ .Current.Temperature }}</div>
+                <div class="condition">{{ .Current.Condition }}</div>
+
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Humidity</span>
+                        <span class="detail-value">{{ .Current.Humidity }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Pressure</span>
+                        <span class="detail-value">{{ .Current.Pressure }} </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">UV Index</span>
+                        <div class="uv-badge">
+                            <span>{{ printf "%.0f" .Current.UVIndex }}</span>
+                            <span class="uv-category" data-status="{{ .Current.UVCategory }}">{{ .Current.UVCategory }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ end }}
+        {{ else }}
+        <div class="weather-card empty-state">
+            <p>Add cities above to compare their weather conditions</p>
+        </div>
+        {{ end }}
+    </div>
+
+    {{ if .Cities }}
+    <!-- Comparison Table -->
+    <div class="weather-card comparison-section">
+        <h2>Weather Comparison</h2>
+
+        <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                <tr>
+                    <th>Metric</th>
+                    {{ range .Cities }}
+                    <th>{{ .Name }}</th>
+                    {{ end }}
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Temperature</td>
+                    {{ range .Cities }}
+                    <td>{{ .Current.Temperature }}</td>
+                    {{ end }}
+                </tr>
+                <tr>
+                    <td>Condition</td>
+                    {{ range .Cities }}
+                    <td>{{ .Current.Condition }}</td>
+                    {{ end }}
+                </tr>
+                <tr>
+                    <td>Humidity</td>
+                    {{ range .Cities }}
+                    <td>{{ .Current.Humidity }}</td>
+                    {{ end }}
+                </tr>
+                <tr>
+                    <td>Pressure</td>
+                    {{ range .Cities }}
+                    <td>{{ .Current.Pressure }} </td>
+                    {{ end }}
+                </tr>
+                <tr>
+                    <td>UV Index</td>
+                    {{ range .Cities }}
+                    <td>
+                        <span>{{ printf "%.0f" .Current.UVIndex }}</span>
+                        <span class="uv-category" data-status="{{ .Current.UVCategory }}">{{ .Current.UVCategory }}</span>
+                    </td>
+                    {{ end }}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{ end }}
+</div>
+
+<script src="/static/js/compare.js"></script>
+<script>
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get location button functionality
+        document.getElementById('getLocation').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                document.getElementById('loadingIndicator').classList.add('show');
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    document.getElementById('city-input').value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                    document.getElementById('loadingIndicator').classList.remove('show');
+                }, function(error) {
+                    console.error("Error getting location: ", error);
+                    document.getElementById('loadingIndicator').classList.remove('show');
+                    alert("Unable to retrieve your location. Please enter a city name manually.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+
+        // Add city button
+        document.getElementById('add-city').addEventListener('click', function() {
+            const cityInput = document.getElementById('city-input');
+            const city = cityInput.value.trim();
+
+            if (city) {
+                document.getElementById('loadingIndicator').classList.add('show');
+
+                // Create the URL with the city parameter
+                const currentUrl = new URL(window.location.href);
+                const existingCities = currentUrl.searchParams.getAll('cities');
+
+                // Reset the URL
+                currentUrl.searchParams.delete('cities');
+
+                // Add existing cities
+                existingCities.forEach(existingCity => {
+                    currentUrl.searchParams.append('cities', existingCity);
+                });
+
+                // Add the new city
+                currentUrl.searchParams.append('cities', city);
+
+                // Navigate to the new URL
+                window.location.href = currentUrl.toString();
+            } else {
+                alert('Please enter a city name');
+            }
+        });
+
+        // Clear all button
+        document.getElementById('clear-all').addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+
+        // Remove city buttons
+        document.querySelectorAll('.remove-city').forEach(button => {
+            button.addEventListener('click', function() {
+                const cityToRemove = this.getAttribute('data-city');
+                const currentUrl = new URL(window.location.href);
+                const existingCities = currentUrl.searchParams.getAll('cities');
+
+                // Reset the URL
+                currentUrl.searchParams.delete('cities');
+
+                // Add all cities except the one to remove
+                existingCities.forEach(city => {
+                    if (city !== cityToRemove) {
+                        currentUrl.searchParams.append('cities', city);
+                    }
+                });
+
+                // Navigate to the new URL
+                window.location.href = currentUrl.toString();
+            });
+        });
+
+        const username = document.getElementById('username').textContent.trim();
+        if (username && username !== 'User') {
+            const profileInitial = document.getElementById('profile-initial');
+            if (profileInitial) {
+                profileInitial.textContent = username.charAt(0).toUpperCase();
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

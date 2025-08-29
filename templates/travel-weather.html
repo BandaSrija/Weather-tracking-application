@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Weather | Weather Tracking App</title>
+
+    <link rel="stylesheet" href="/static/css/travel-weather.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+    <div class="header-logo">
+        <a href="/" class="logo">
+            <img src="/static/Mainlogo.png" alt="GoWeather Logo" class="logo-img">
+        </a>
+    </div>
+    <div class="header-right">
+        <div class="welcome-text">Welcome, <strong id="username">{{ if .User }}{{ .User.Username }}{{ else }}User{{ end }}</strong></div>
+        <div class="nav-buttons">
+            <a href="./" class="transparent-button">Home</a>
+            <a href="./compare" class="transparent-button">Compare</a>
+            <a href="./historical-comparison" class="transparent-button">Historical</a>
+            <a href="./travel-weather" class="transparent-button travel-button">Travel Plan</a>
+            <a href="./activities" class="transparent-button">Activities</a>
+
+            <!-- Profile dropdown -->
+            <div class="profile-dropdown">
+                <div class="profile-circle" id="profileCircle">
+                    <img id="profile-photo" src="{{ if .User.ProfilePhoto }}/static/profile_photos/{{ .User.ProfilePhoto }}{{ else }}/static/profile_photos/default.jpg{{ end }}" alt="Profile Photo" height="40px">
+                </div>
+                <div class="dropdown-content" id="dropdownContent">
+                    <a href="./profile"><i class="fas fa-user"></i> Profile</a>
+                    <a href="./logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main>
+    <section class="hero">
+        <h1>Travel Weather</h1>
+        <p>Plan your trip with accurate weather forecasts</p>
+    </section>
+
+    <section class="travel-form card">
+        <h2>Check Travel Weather</h2>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="from-location">From:</label>
+                <input type="text" id="from-location" placeholder="Enter origin location">
+            </div>
+
+            <div class="form-group">
+                <label for="to-location">To:</label>
+                <input type="text" id="to-location" placeholder="Enter destination location">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="travel-date">Travel Date:</label>
+                <input type="date" id="travel-date">
+            </div>
+
+            <div class="form-group form-toggle">
+                <label class="toggle-label">
+                    <input type="checkbox" id="include-stops">
+                    <span class="toggle-text">Include Stops</span>
+                </label>
+            </div>
+        </div>
+
+        <div id="stops-container" class="stops-section hidden">
+            <h3>Stops</h3>
+            <div id="stops-list"></div>
+            <button id="add-stop" class="btn secondary">
+                <i class="fas fa-plus"></i> Add Stop
+            </button>
+        </div>
+
+        <button id="check-weather" class="btn primary">Check Weather</button>
+    </section>
+    <section class="travel-map card hidden" id="map-container">
+        <h2>Travel Route Map</h2>
+        <div id="travel-map"></div>
+        <div class="map-legend">
+            <div class="legend-item">
+                <span class="legend-icon origin-icon"></span>
+                <span class="legend-text">Origin</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-icon destination-icon"></span>
+                <span class="legend-text">Destination</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-icon stop-icon"></span>
+                <span class="legend-text">Stops</span>
+            </div>
+        </div>
+    </section>
+    <div id="results-container" class="hidden">
+        <!-- Weather Results Section -->
+        <section class="weather-overview card">
+            <h2>Weather Overview</h2>
+
+            <div class="location-weather">
+                <div class="weather-card origin">
+                    <h3 id="origin-name">Origin</h3>
+                    <div class="weather-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="temperature">
+                        <span id="origin-temp">25°C</span>
+                    </div>
+                    <div class="condition" id="origin-condition">Sunny</div>
+                    <div class="weather-details">
+                        <div class="detail-item">
+                            <i class="fas fa-wind"></i>
+                            <span id="origin-wind">5 m/s</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-tint"></i>
+                            <span id="origin-humidity">45%</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-umbrella"></i>
+                            <span id="origin-precipitation">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weather-card destination">
+                    <h3 id="destination-name">Destination</h3>
+                    <div class="weather-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <div class="temperature">
+                        <span id="destination-temp">20°C</span>
+                    </div>
+                    <div class="condition" id="destination-condition">Partly Cloudy</div>
+                    <div class="weather-details">
+                        <div class="detail-item">
+                            <i class="fas fa-wind"></i>
+                            <span id="destination-wind">8 m/s</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-tint"></i>
+                            <span id="destination-humidity">60%</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-umbrella"></i>
+                            <span id="destination-precipitation">10%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Travel Suggestions -->
+        <section class="travel-suggestions card">
+            <h2>Travel Suggestions</h2>
+
+            <div class="suggestion-container">
+                <div class="suggestion-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="suggestion-content">
+                    <h3>Weather Advisory</h3>
+                    <p id="weather-advice">Weather conditions look favorable for travel. No significant weather concerns on your route.</p>
+                </div>
+            </div>
+
+            <div class="suggestion-container">
+                <div class="suggestion-icon">
+                    <i class="fas fa-suitcase"></i>
+                </div>
+                <div class="suggestion-content">
+                    <h3>Packing List</h3>
+                    <ul id="packing-list">
+                        <li>Light jacket or sweater</li>
+                        <li>Sunglasses</li>
+                        <li>Comfortable shoes</li>
+                        <li>Water bottle</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forecast Section -->
+        <section class="forecast card">
+            <h2>5-Day Forecast</h2>
+
+            <div class="forecast-tabs">
+                <button class="tab active" data-tab="origin-forecast">Origin</button>
+                <button class="tab" data-tab="destination-forecast">Destination</button>
+            </div>
+
+            <div class="forecast-content">
+                <div id="origin-forecast" class="forecast-panel active">
+                    <div class="forecast-days">
+                        <!-- Forecast items will be added via JavaScript -->
+                    </div>
+                </div>
+
+                <div id="destination-forecast" class="forecast-panel">
+                    <div class="forecast-days">
+                        <!-- Forecast items will be added via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Time Zone Information -->
+        <section class="timezone card">
+            <h2>Time Zone Information</h2>
+
+            <div class="timezone-comparison">
+                <div class="timezone-card">
+                    <h3 id="origin-timezone-name">Origin</h3>
+                    <div class="current-time" id="origin-time">10:30 AM</div>
+                    <div class="sun-times">
+                        <div class="sunrise">
+                            <i class="fas fa-sun"></i>
+                            <span id="origin-sunrise">6:45 AM</span>
+                        </div>
+                        <div class="sunset">
+                            <i class="fas fa-moon"></i>
+                            <span id="origin-sunset">7:30 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timezone-card">
+                    <h3 id="destination-timezone-name">Destination</h3>
+                    <div class="current-time" id="destination-time">1:30 PM</div>
+                    <div class="sun-times">
+                        <div class="sunrise">
+                            <i class="fas fa-sun"></i>
+                            <span id="destination-sunrise">6:15 AM</span>
+                        </div>
+                        <div class="sunset">
+                            <i class="fas fa-moon"></i>
+                            <span id="destination-sunset">8:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="time-difference">
+                <p>Time Difference: <span id="time-diff">3 hours</span></p>
+                <p id="time-advice">Remember to adjust your schedule for the time difference.</p>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Weather Tracking App | All rights reserved</p>
+</footer>
+
+<script src="/static/js/travel-weather.js"></script>
+</body>
+</html>

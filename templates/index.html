@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoWeather - Your Weather Companion</title>
+  <link rel="stylesheet" href="/static/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Added Montserrat font for a more modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Location popup styling */
+    .location-popup {
+      position: fixed;
+      top: 10%;  /* Move to middle of screen vertically */
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%) scale(0.9);  /* Center and start slightly smaller */
+      background-color: rgba(22, 15, 47, 0.9);  /* Dark purple background to match site theme */
+      padding: 20px 25px;
+      border-radius: 12px;
+      border: 2px solid #f4a942;  /* Orange/yellow border to match site accent */
+      box-shadow: 0 5px 25px rgba(244, 169, 66, 0.3);  /* Subtle glow effect with brand color */
+      z-index: 1000;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+      opacity: 0;
+    }
+
+    .location-popup.show {
+      transform: translateX(-50%) translateY(-50%) scale(1);  /* Grow to full size when shown */
+      opacity: 1;
+    }
+
+    .location-popup p {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #ffffff;  /* White text for contrast */
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.4;
+    }
+
+    .popup-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .allow-btn, .deny-btn {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 25px;  /* Rounded buttons */
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.2s;
+      font-size: 15px;
+    }
+
+    .allow-btn {
+      background-color: #f4a942;  /* Yellow/orange to match site accent */
+      color: #16102d;  /* Dark color for text */
+    }
+
+    .allow-btn:hover {
+      background-color: #ffbc54;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(244, 169, 66, 0.4);
+    }
+
+    .deny-btn {
+      background-color: rgba(255, 255, 255, 0.2);  /* Semi-transparent white */
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .deny-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .allow-btn:active, .deny-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Status message styling - updated to match theme */
+    #status-message {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: rgba(22, 15, 47, 0.85);
+      color: white;
+      border-radius: 25px;
+      font-weight: bold;
+      display: inline-block;
+      max-width: 80%;
+      text-align: center;
+      border: 1px solid rgba(244, 169, 66, 0.5);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+  <div class="logo-container">
+    <a href="/" ><img src="/static/Mainlogo.png" alt="Go Weather Logo" class="site-logo"> </a>
+  </div>
+  <nav>
+    <a href="/login" class="login-btn">Login</a>
+    <a href="/signup" class="signup-btn">Signup</a>
+  </nav>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="location-popup">
+    <p>GoWeather wants to access your location to show weather information for your area.</p>
+    <div class="popup-buttons">
+      <button class="allow-btn" type="button">Allow</button>
+      <button class="deny-btn" type="button">Deny</button>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <h1>Go Weather</h1>
+    <h2>Your stylish companion <br>for real-time <span id="changing-word" class="highlight">tracking</span></h2>
+    <a href="#services" class="get-started-btn">Get Started <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services">
+  <h2>Our services</h2>
+
+  <div class="service-container">
+    <div class="service-text">
+      <h3>Go Language</h3>
+      <p>Your personal weather station, right in your pocket.</p>
+      <p>Get Accurate weather information and many more</p>
+    </div>
+    <div class="service-image">
+      <img src="/static/firstPhoto.jpeg" alt="Weather device" class="device-img">
+      <div class="overlay-text top-right">Get Alerts on weather</div>
+      <div class="overlay-text middle-left">Data at your fingertips</div>
+      <div class="overlay-text bottom-right">Compare weather</div>
+    </div>
+  </div>
+</section>
+
+<!-- Historical Data Section -->
+<section class="historical-data">
+  <div class="data-container">
+    <div class="data-image">
+      <img src="../static/Datasecondphoto.jpg" alt="Weather on phone" class="phone-img">
+    </div>
+    <div class="data-text">
+      <h2>Historical Data Comparision</h2>
+      <p>Discover detailed and accurate weather records from the past. Whether you're a researcher, developer, student, or weather enthusiast, GoWeather provides reliable historical weather data to suit your needs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Travel Section -->
+<section class="travel-section">
+  <div class="travel-container">
+    <div class="travel-text">
+      <h2>Plan Your Perfect Trip with GoWeather</h2>
+      <p>Travel smarter with accurate, location-based weather insights. At GoWeather, we help you make informed travel decisions by providing reliable historical weather data for any destination around the globe</p>
+    </div>
+    <div class="travel-image">
+      <img src="/static/TripPhoto.jpeg" alt="Travel weather" class="travel-img">
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <p>&copy; 2025 GoWeather. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Word cycling functionality -->
+<script>
+  // Word cycling functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded - initializing functionality");
+
+    const words = ["tracking", "forecast", "alerts", "temperature", "humidity", "wind"];
+    let currentIndex = 0;
+    const wordElement = document.getElementById('changing-word');
+
+    function changeWord() {
+      // Fade out
+      wordElement.style.opacity = '0';
+
+      setTimeout(() => {
+        // Change word
+        currentIndex = (currentIndex + 1) % words.length;
+        wordElement.textContent = words[currentIndex];
+
+        // Fade in
+        wordElement.style.opacity = '1';
+      }, 500);
+    }
+
+    // Change word every 2 seconds
+    setInterval(changeWord, 2000);
+
+    // Show location popup after a delay
+    setTimeout(function() {
+      document.querySelector('.location-popup').classList.add('show');
+      console.log("Location popup shown");
+    }, 5000);
+  });
+</script>
+
+<!-- Separate geolocation handling script -->
+<script>
+  // Handle location buttons
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle "Allow" button click
+    const allowBtn = document.querySelector('.allow-btn');
+    if (allowBtn) {
+      allowBtn.onclick = function(e) {
+        e.preventDefault();
+        console.log("Allow button clicked");
+        document.querySelector('.location-popup').classList.remove('show');
+
+        // Create status message
+        const heroContent = document.querySelector('.hero-content');
+        const statusMsg = document.createElement('div');
+        statusMsg.id = 'status-message';
+        statusMsg.textContent = 'Getting your location...';
+        heroContent.appendChild(statusMsg);
+
+        if (navigator.geolocation) {
+          console.log("Browser supports geolocation");
+
+          navigator.geolocation.getCurrentPosition(
+                  // Success callback
+                  function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    console.log("Got coordinates:", latitude, longitude);
+                    statusMsg.textContent = `Location found! Coordinates: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+
+                    // Store coordinates in sessionStorage immediately
+                    sessionStorage.setItem('weatherLat', latitude);
+                    sessionStorage.setItem('weatherLon', longitude);
+
+                    // Default to a city name based on location (Charlotte for these coordinates)
+                    const defaultCityName = "Charlotte";
+
+                    // Try to get actual city name, but be prepared to use default
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', `/api/reverse-geocode?lat=${latitude}&lon=${longitude}`, true);
+
+                    xhr.onload = function() {
+                      if (xhr.status === 200) {
+                        try {
+                          const data = JSON.parse(xhr.responseText);
+                          const cityName = data.name || defaultCityName;
+
+                          // Store city in sessionStorage
+                          sessionStorage.setItem('weatherCity', cityName);
+
+                          // Update status before redirect
+                          statusMsg.textContent = `Found location: ${cityName}. Redirecting...`;
+
+                          // Redirect with city name
+                          setTimeout(function() {
+                            window.location.href = `/weather?city=${encodeURIComponent(cityName)}`;
+                          }, 1500);
+                        } catch (e) {
+                          useDefaultCity(defaultCityName, statusMsg);
+                        }
+                      } else {
+                        console.error("Error getting location name:", xhr.status);
+                        useDefaultCity(defaultCityName, statusMsg);
+                      }
+                    };
+
+                    xhr.onerror = function() {
+                      console.error("Network error getting location name");
+                      useDefaultCity(defaultCityName, statusMsg);
+                    };
+
+                    xhr.send();
+                  },
+                  // Error callback
+                  function(error) {
+                    console.log("Geolocation error:", error.code, error.message);
+                    handleGeolocationError(statusMsg);
+                  },
+                  // Options
+                  {
+                    enableHighAccuracy: false,
+                    timeout: 7000,
+                    maximumAge: 60000
+                  }
+          );
+        } else {
+          // Browser doesn't support geolocation
+          console.log("Browser doesn't support geolocation");
+          handleGeolocationError(statusMsg);
+        }
+
+        function useDefaultCity(cityName, statusMsg) {
+          // Update status message
+          statusMsg.textContent = `Using ${cityName} as your location. Redirecting...`;
+
+          // Store the default city
+          sessionStorage.setItem('weatherCity', cityName);
+
+          // Redirect to weather with city parameter
+          setTimeout(function() {
+            window.location.href = `/weather?city=${encodeURIComponent(cityName)}`;
+          }, 1500);
+        }
+
+        function handleGeolocationError(statusMsg) {
+          statusMsg.textContent = 'Could not determine your exact location. Redirecting to manual selection...';
+          setTimeout(function() {
+            window.location.href = '/location-options';
+          }, 1500);
+        }
+
+        return false;
+      };
+    }
+
+    // Handle "Deny" button click
+    const denyBtn = document.querySelector('.deny-btn');
+    if (denyBtn) {
+      denyBtn.onclick = function(e) {
+        e.preventDefault();
+        console.log("Deny button clicked");
+        document.querySelector('.location-popup').classList.remove('show');
+
+        // Create status message
+        const heroContent = document.querySelector('.hero-content');
+        const statusMsg = document.createElement('div');
+        statusMsg.id = 'status-message';
+        statusMsg.textContent = 'Location access denied. Redirecting to manual selection...';
+        heroContent.appendChild(statusMsg);
+
+        setTimeout(function() {
+          console.log("Redirecting to location options after deny");
+          window.location.href = '/location-options';
+        }, 1500);
+
+        return false;
+      };
+    }
+  });
+</script>
+
+</body>
+</html>
